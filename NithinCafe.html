@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nithin Café Management System ☕</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      margin: 0;
+      background: linear-gradient(180deg, #fff3e0, #ffe0b2);
+      color: #3e2723;
+      overflow-x: hidden;
+    }
+
+    .floating-icon {
+      position: fixed;
+      width: 50px;
+      opacity: 0.25;
+      animation: floatUp 10s infinite ease-in-out;
+      z-index: 0;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(100vh) scale(0.8); opacity: 0.2; }
+      50% { transform: translateY(50vh) scale(1); opacity: 0.6; }
+      100% { transform: translateY(-10vh) scale(0.8); opacity: 0.2; }
+    }
+
+    header {
+      background: linear-gradient(90deg, #6f4e37, #b5651d);
+      color: #fffceb;
+      padding: 25px 0;
+      text-align: center;
+      font-size: 32px;
+      font-weight: bold;
+      position: relative;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+
+    header p {
+      margin: 5px 0 0 0;
+      font-size: 16px;
+      opacity: 0.9;
+      font-style: italic;
+    }
+
+    #topButtons {
+      position: absolute;
+      right: 15px;
+      top: 25px;
+    }
+
+    #topButtons button {
+      background: linear-gradient(90deg, #ffcc80, #ffb300);
+      color: #4e342e;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 14px;
+      margin-left: 5px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
+      transition: 0.3s;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    #topButtons button:hover {
+      background: linear-gradient(90deg, #ffe082, #fb8c00);
+      transform: scale(1.07);
+    }
+    .steam {
+      position: absolute;
+      top: 48%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 6px;
+    }
+    .steam span {
+      width: 6px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.7);
+      animation: rise 3s infinite ease-in;
+      opacity: 0;
+    }
+    .steam span:nth-child(1) { animation-delay: 0s; }
+    .steam span:nth-child(2) { animation-delay: 1s; }
+    .steam span:nth-child(3) { animation-delay: 2s; }
+    .steam span:nth-child(4) { animation-delay: 3s; }
+
+    @keyframes rise {
+      0% { transform: translateY(0) scale(0.8); opacity: 0; }
+      30% { opacity: 0.6; }
+      50% { opacity: 0.8; }
+      100% { transform: translateY(-70px) scale(1.2); opacity: 0; }
+    }
+    .coffee-cup {
+      position: relative;
+      display: inline-block;
+      animation: glow 2s infinite alternate ease-in-out;
+    }
+    @keyframes glow {
+      from { filter: drop-shadow(0 0 0px #ffb74d); }
+      to { filter: drop-shadow(0 0 10px #ffcc80); }
+    }
+    .container {
+      display: flex;
+      justify-content: space-between;
+      padding: 25px;
+    }
+    .menu {
+      width: 70%;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 25px;
+      justify-content: center;
+    }
+    .menu-item {
+      background: #fff;
+      border-radius: 18px;
+      width: 200px;
+      text-align: center;
+      padding: 18px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      transition: all 0.3s;
+    }
+    .menu-item:hover {
+      transform: translateY(-6px) scale(1.03);
+      box-shadow: 0 10px 25px rgba(255, 171, 64, 0.4);
+    }
+    .menu-item img {
+      width: 90px;
+      height: 90px;
+      margin: 10px auto;
+      transition: transform 0.3s ease;
+    }
+    .menu-item:hover img {
+      transform: rotate(-5deg) scale(1.1);
+    }
+    .menu-item h3 {
+      margin: 5px 0;
+      color: #5d4037;
+    }
+    .menu-item p {
+      font-weight: 600;
+      color: #6d4c41;
+    }
+    .menu-item button {
+      background: linear-gradient(90deg, #d7ccc8, #a1887f);
+      border: none;
+      border-radius: 10px;
+      color: #3e2723;
+      font-weight: bold;
+      padding: 8px 15px;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .menu-item button:hover {
+      background: linear-gradient(90deg, #ffccbc, #d7ccc8);
+      transform: scale(1.05);
+    }
+    .menu-item.selected {
+      background: linear-gradient(180deg, #fff8e1, #ffe0b2);
+      box-shadow: 0 0 15px rgba(255, 152, 0, 0.7);
+      transform: scale(1.02);
+    }
+    .categories {
+      width: 25%;
+      background: linear-gradient(180deg, #fff8e1, #ffe0b2);
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+      height: fit-content;
+    }
+    .categories h2 {
+      text-align: center;
+      color: #6f4e37;
+    }
+    .categories button {
+      display: block;
+      width: 100%;
+      margin: 8px 0;
+      background: linear-gradient(90deg, #ffe0b2, #f57c00);
+      border: none;
+      border-radius: 10px;
+      padding: 12px;
+      color: #3e2723;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .categories button:hover,
+    .categories button.active {
+      background: linear-gradient(90deg, #ff9800, #fb8c00);
+      color: white;
+      transform: scale(1.05);
+    }
+    #cartView {
+      display: none;
+      background: #fff8f0;
+      padding: 25px;
+      text-align: center;
+    }
+    #cartView h2 {
+      color: #5d4037;
+      margin-bottom: 20px;
+    }
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      font-size: 16px;
+      align-items: center;
+    }
+    .cart-item button {
+      background: #a1887f;
+      color: white;
+      border-radius: 50%;
+      border: none;
+      width: 28px;
+      height: 28px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    #cartButtons button {
+      background: linear-gradient(90deg, #8bc34a, #81c784);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 20px;
+      margin: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+      font-size: 16px;
+    }
+    #cartButtons button:hover {
+      background: linear-gradient(90deg, #aed581, #9ccc65);
+      transform: scale(1.05);
+    }
+    #logoutBtn {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      background: linear-gradient(90deg, #ef6c00, #d84315);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 14px 30px;
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    #logoutBtn:hover {
+      background: linear-gradient(90deg, #ff7043, #ef5350);
+      transform: scale(1.05);
+    }
+    #loginModal, #customerModal, #logoutModal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      background: rgba(0,0,0,0.6);
+      z-index: 9999;
+    }
+    #loginModal.active, #customerModal.active, #logoutModal.active {
+      display: flex;
+    }
+    #loginBox, #customerBox, #logoutBox {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      width: 320px;
+      text-align: center;
+      box-shadow: 0 6px 25px rgba(0,0,0,0.3);
+    }
+    input {
+      width: 90%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    #loginBox button, #customerBox button, #logoutBox button {
+      background: linear-gradient(90deg, #ffb74d, #f57c00);
+      border: none;
+      color: #3e2723;
+      border-radius: 10px;
+      padding: 10px 20px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    #loginBox button:hover, #customerBox button:hover, #logoutBox button:hover {
+      background: linear-gradient(90deg, #ffe0b2, #ffcc80);
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+
+<img src="https://cdn-icons-png.flaticon.com/512/924/924514.png" class="floating-icon" style="left:10%;animation-delay:0s;" />
+<img src="https://cdn-icons-png.flaticon.com/512/924/924514.png"
+class="floating-icon" style="left:30%;animation-delay:3s;" />
+<img src="https://cdn-icons-png.flaticon.com/512/898/898803.png" class="floating-icon" style="left:70%;animation-delay:6s;" />
+
+<header>
+  <div class="coffee-header">
+    Nithin Café <span class="coffee-cup">☕</span>
+    <div class="steam">
+      <span></span><span></span><span></span><span></span>
+    </div>
+  </div>
+  <p>Where Every Sip and Bite Feels Like Home and too Where Coffee Meets Culinary Delight !</p>
+  <div id="topButtons" style="display:none;">
+    <button onclick="goToCart()">Go to Cart</button>
+    <button onclick="backToHome()">Back to Home</button>
+  </div>
+</header>
+
+<button id="logoutBtn" onclick="showLogoutModal()">Logout</button>
+<div id="logoutModal">
+  <div id="logoutBox">
+    <h2>Logout?</h2>
+    <p>Are you sure you want to logout?</p>
+    <button onclick="doLogout()">Yes</button>
+    <button onclick="hideLogoutModal()">Cancel</button>
+  </div>
+</div>
+<div id="loginModal" class="active">
+  <div id="loginBox">
+    <h2>Admin Login</h2>
+    <input type="text" id="username" placeholder="Username" autocomplete="off"/><br />
+    <input type="password" id="password" placeholder="Password" autocomplete="off"/><br />
+    <button onclick="login()">Login</button>
+    <p id="loginError" style="color:red;"></p>
+  </div>
+</div>
+<!-- Customer Modal Section -->
+<div id="customerModal">
+  <div id="customerBox">
+    <h2>Customer Details</h2>
+    <input type="text" id="customerName" placeholder="Name" autocomplete="off" /><br />
+    <input type="tel" id="customerPhone" maxlength="10" placeholder="Phone Number" autocomplete="off" /><br />
+
+    <!-- Payment Method Selection -->
+    <div id="paymentMethodSection">
+      <button class="payment-method-btn" onclick="selectPaymentMethod('gpay')">
+        <img src='https://play-lh.googleusercontent.com/HArtbyi53u0jnqhnnxkQnMx9dHOERNcprZyKnInd2nrfM7Wd9ivMNTiz7IJP6-mSpwk'
+        alt="GPay" />
+        GPay
+      </button>
+      <button class="payment-method-btn" onclick="selectPaymentMethod('phonepe')">
+        <img src='https://s3-alpha.figma.com/hub/file/2736691733/3e8b77fb-3995-4701-bb49-a72b7f2746e1-cover.png' alt="PhonePe" />
+        PhonePe
+      </button>
+      <button class="payment-method-btn" onclick="selectPaymentMethod('paytm')">
+        <img src='https://thepatriot.in/wp-content/uploads/2024/02/Paytm.jpg' alt="Paytm" />
+        Paytm
+      </button>
+      <button class="payment-method-btn" onclick="selectPaymentMethod('PAC')">
+        <img src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRCLneyl3V7Z9MPus4OSbaS5_L17_RAt_GMcw&s '
+        alt="pay at counter" />
+        pay at counter
+      </button>
+    </div>
+
+    <!-- QR Code Section for Online Payments -->
+    <div id="qrSection" style="display:none;">
+      <p>Scan QR to pay ₹<span id="qrAmount"></span></p>
+      <img id="qrImage" src="" alt="QR Code" style="width:160px;height:160px;" />
+      <button id="paymentDoneBtn" onclick="onlinePaymentDone()">Done</button>
+    </div>
+
+    <button onclick="submitCustomerDetails()">Submit</button>
+    <button onclick="cancelCustomerDetails()">Cancel</button>
+  </div>
+</div>
+
+<style>
+  #paymentMethodSection {
+    margin-top: 15px;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+  }
+  .payment-method-btn {
+    background: linear-gradient(90deg, #ffa726, #ef6c00);
+    border: none;
+    color: white;
+    font-weight: 700;
+    padding: 10px 12px;
+    border-radius: 12px;
+    margin: 5px;
+    cursor: pointer;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 80px;
+    transition: transform 0.3s ease;
+  }
+  .payment-method-btn img {
+    max-width: 38px;
+    margin-bottom: 5px;
+  }
+  .payment-method-btn.selected {
+    box-shadow: 0 0 12px 3px #ff9800;
+    transform: scale(1.1);
+  }
+  #qrSection {
+    background: linear-gradient(135deg, #8b4513, #ffa500);
+    border-radius: 15px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 15px;
+  }
+  #paymentDoneBtn {
+    margin-top: 10px;
+    background: linear-gradient(90deg, #a0522d, #ff8c00);
+    border: none;
+    color: white;
+    border-radius: 12px;
+    padding: 10px 25px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 16px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+    transition: all 0.3s ease;
+  }
+  #paymentDoneBtn:hover {
+    background: linear-gradient(90deg, #ff8c00, #a0522d);
+    transform: scale(1.05);
+  }
+</style>
+
+<script>
+  let selectedPaymentMethod = null;
+
+  // Restrict phone input to digits and max 10 length
+  const phoneInput = document.getElementById("customerPhone");
+  phoneInput.addEventListener("input", function () {
+    this.value = this.value.replace(/\D/g, '').slice(0, 10);
+  });
+
+  function selectPaymentMethod(method) {
+    selectedPaymentMethod = method;
+    document.querySelectorAll(".payment-method-btn").forEach(btn => btn.classList.remove("selected"));
+
+    // Highlight selected button
+    const buttons = document.querySelectorAll(".payment-method-btn");
+    buttons.forEach(btn => {
+      if (btn.textContent.trim().toLowerCase() === method || btn.onclick.toString().includes(`'${method}'`)) {
+        btn.classList.add("selected");
+      }
+    });
+
+    if (["gpay", "phonepe", "paytm"].includes(method)) {
+      const totalAmt = calculateTotalWithCharity();
+      showQRCodeForAmount(totalAmt);
+    } else {
+      hideQRCode();
+    }
+  }
+
+  function calculateTotalWithCharity() {
+    // Replace with your real cart total calculation plus 1 Rs charity
+    let cartTotal = 0;
+    cart.forEach(item => {
+      cartTotal += item.price * item.qty;
+    });
+    return cartTotal + 1;
+  }
+
+  function showQRCodeForAmount(amount) {
+    const qrSection = document.getElementById("qrSection");
+    const qrAmount = document.getElementById("qrAmount");
+    const qrImage = document.getElementById("qrImage");
+    qrAmount.textContent = amount;
+    const upiID = "nithincafe@upi";
+    const upiString = `upi://pay?pa=${upiID}&pn=NithinCafe&am=${amount}&cu=INR`;
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(upiString)}`;
+    qrImage.src = qrUrl;
+    qrSection.style.display = "flex";
+  }
+
+  function hideQRCode() {
+    const qrSection = document.getElementById("qrSection");
+    const qrImage = document.getElementById("qrImage");
+    qrImage.src = "";
+    qrSection.style.display = "none";
+  }
+
+  function onlinePaymentDone() {
+    // Trigger actual payment confirmation logic here
+    alert("Online payment marked as done. You can now generate the bill and send it.");
+    // Implement bill printing & sending logic here, e.g. call your printBill() function
+  }
+
+  function submitCustomerDetails() {
+    const name = document.getElementById("customerName").value.trim();
+    const phone = document.getElementById("customerPhone").value.trim();
+
+    if (!name) {
+      alert("Please enter your name!");
+      return;
+    }
+    if (!phone || phone.length !== 10) {
+      alert("Please enter a valid 10-digit phone number!");
+      return;
+    }
+    if (!selectedPaymentMethod) {
+      alert("Please select a payment method!");
+      return;
+    }
+    if (["gpay", "phonepe", "paytm"].includes(selectedPaymentMethod) && document.getElementById("qrSection").style.display === "none") {
+      alert("Please scan the QR code to make online payment!");
+      return;
+    }
+    // Proceed with your order logic once details are validated
+    alert(`Customer: ${name}, Phone: ${phone}, Payment: ${selectedPaymentMethod.toUpperCase()}`);
+    // Hide modal, clear, etc.
+    // Call bill printing method after payment confirmed
+  }
+</script>
+
+<div class="container" id="mainContainer" style="display:none;">
+  <div class="menu" id="menu"></div>
+  <div class="categories">
+    <h2>Categories</h2>
+    <button onclick="showCategory('coffee', this)">Coffee</button>
+    <button onclick="showCategory('food', this)">Food</button>
+    <button onclick="showCategory('burger', this)">Burger</button>
+    <button onclick="showCategory('fries', this)">Fries</button>
+    <button onclick="showCategory('Combo', this)">Combo</button>
+    <button onclick="showAll(this)">Show All</button>
+  </div>
+</div>
+<div id="cartView" style="display:none;">
+  <h2>Your Cart</h2>
+  <div id="cartItems"></div>
+  <div id="cartTotal">Total: ₹<span id="totalPrice">0</span></div>
+  <div id="cartButtons">
+    <button onclick="confirmOrder()">Confirm Order</button>
+    <button onclick="cancelOrder()">Cancel Order</button>
+  </div>
+</div>
+<script>
+const menu = [
+ { name: "Cappuccino", price: 120, category: "coffee", img: 'https://images.unsplash.com/photo-1708430651927-20e2e1f1e8f7?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Y2FwcHVjY2lubyUyMGNvZmZlZXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&q=60&w=1000' },
+
+{ name: "Espresso", price: 100, category: "coffee", img: 'https://plus.unsplash.com/premium_photo-1669687924558-386bff1a0469?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8ZXNwcmVzc298ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&q=60&w=1000' },
+
+{ name: "Latte", price: 130, category: "coffee", img: 'https://images.unsplash.com/photo-1585494156145-1c60a4fe952b?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bGF0dGUlMjBjb2ZmZWV8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&q=60&w=1000' },
+
+{ name: "Americano", price: 110, category: "coffee", img: 'https://images.unsplash.com/photo-1669872484166-e11b9638b50e?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YW1lcmljYW5vJTIwY29mZmVlfGVufDB8fDB8fHww&auto=format&fit=crop&q=60&w=1000' },
+
+{ name: "Mocha", price: 140, category: "coffee", img: 'https://plus.unsplash.com/premium_photo-1671559021617-63260def0504?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8bW9jaGElMjBjb2ZmZWV8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&q=60&w=1000' },
+
+{ name: "Macchiato", price: 135, category: "coffee", img: 'https://images.unsplash.com/photo-1674642387246-463a03b100be?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bWFjY2hpYXRvJTIwY29mZmVlfGVufDB8fDB8fHww&auto=format&fit=crop&q=60&w=1000'},
+
+{ name: "Flat White", price: 125, category: "coffee", img: 'https://images.unsplash.com/photo-1746281673841-31a64ca33ef1?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8Zmxhc2glMjB3aGl0ZSUyMGNvZmZlZXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&q=60&w=1000' },
+
+{ name: "Affogato", price: 150, category: "coffee", img: 'https://images.unsplash.com/photo-1696522692156-7340b681c3bb?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fGFmZm9nYXRvJTIwY29mZmVlfGVufDB8fDB8fHww&auto=format&fit=crop&q=60&w=1000'},
+
+{ name: "Irish Coffee", price: 160, category: "coffee", img: 'https://images.unsplash.com/photo-1580661869408-55ab23f2ca6e?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8aXJpc2hjb2ZmZWV8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&q=60&w=1000'},
+
+{ name: "Turkish Coffee", price: 105, category: "coffee", img: "https://plus.unsplash.com/premium_photo-1732818136131-3dcfdaaa6a8e?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTN8fHR1cmtpc2glMjBjb2ZmZWV8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&q=60&w=1000" },
+
+{ name: "Classic Veg Burger", price: 160, category: "burger", img: "https://plus.unsplash.com/premium_photo-1683619761492-639240d29bb5?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Y2xhc3NpYyUyMHZlZyUyMGJ1cmdlcnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&q=60&w=1000" },
+
+{ name: "Cheese Burger", price: 175, category: "burger", img: 'https://images.unsplash.com/photo-1613851779795-ffd0e7b8b4a5?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Y2hlZXMlMjBidXJnZXJ8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&q=60&w=1000' },
+
+{ name: "Chicken Burger", price: 190, category: "burger", img: 'https://images.unsplash.com/photo-1637710847214-f91d99669e18?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Y2hpY2tlbiUyMGJ1cmdlcnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&q=60&w=1000' },
+
+{ name: "Spicy Burger", price: 170, category: "burger", img: 'https://plus.unsplash.com/premium_photo-1666830497610-c303d845474e?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8c3BpY3klMjBidXJnZXJ8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&q=60&w=1000' },
+
+{ name: "BBQ Burger", price: 180, category: "burger", img: 'https://images.unsplash.com/photo-1534790566855-4cb788d389ec?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8QkJRJTIwYnVyZ2VyfGVufDB8fDB8fHww&auto=format&fit=crop&q=60&w=1000' },
+
+{ name: "Paneer Burger", price: 165, category: "burger", img: 'https://plus.unsplash.com/premium_photo-1664392112262-271039647be9?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8cGFuZWVyJTIwYnVyZ2VyfGVufDB8fDB8fHww&auto=format&fit=crop&q=60&w=1000' },
+
+{ name: "Double Patty Burger", price: 200, category: "burger", img: 'https://plus.unsplash.com/premium_photo-1664391861596-b41f6f364529?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8ZG91YmxlJTIwcGFydHklMjBidXJnZXJ8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&q=60&w=1000' },
+
+{ name: "Egg Burger", price: 150, category: "burger", img: 'https://plus.unsplash.com/premium_photo-1661387986575-0ac3a4d53395?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8ZWdnJTIwYnVyZ2VyfGVufDB8fDB8fHww&auto=format&fit=crop&q=60&w=1000' },
+
+{ name: "Veggie Delight Burger", price: 155, category: "burger", img: 'https://plus.unsplash.com/premium_photo-1683619761492-639240d29bb5?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8VmVnZ2llJTIwRGVsaWdodCUyMEJ1cmdlcnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&q=60&w=1000' },
+
+{ name: "Mushroom Burger", price: 175, category: "burger", img: 'https://images.unsplash.com/photo-1683882330182-eb8f64d7231c?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8TXVzaHJvb20lMjBCdXJnZXJ8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&q=60&w=1000' },
+
+{ name: "Cheese Fries", price: 120, category: "fries", img: 'https://images.unsplash.com/photo-1609530127564-bee93ebe1c9e?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Y2hlZXN5JTIwZnJpZXN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&q=60&w=1000' },
+
+{ name: "Spicy Fries", price: 115, category: "fries", img: 'https://images.unsplash.com/photo-1688059187289-a920f4e4ff95?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8c3BpY3klMjBmcmllc3xlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&q=60&w=1000' },
+
+{ name: "Loaded Fries", price: 140, category: "fries", img: 'https://images.unsplash.com/photo-1683807226785-e2337068315b?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGxvYWRlZCUyMGZyaWVzfGVufDB8fDB8fHww&auto=format&fit=crop&q=60&w=1000' },
+
+{ name: "Curry Fries", price: 130, category: "fries", img: "https://images.unsplash.com/photo-1561701034-24ceb3e34433?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Y3VycnklMjBmcmllc3xlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&q=60&w=1000" },
+
+{ name: "Peri Peri Fries", price: 125, category: "fries", img: 'https://images.unsplash.com/photo-1714651620426-1ae32ca6b418?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cGVyaSUyMHBlcmklMjBmcmllc3xlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&q=60&w=1000' },
+
+// South Indian
+{ name: "Masala Dosa", price: 90, category: "food", img: 'https://images.unsplash.com/photo-1694849789325-914b71ab4075?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bWFzYWxhJTIwZG9zYXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&q=60&w=1000' },
+
+{ name: "Idli", price: 60, category: "food", img: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aWRsaXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&q=60&w=1000' },
+
+{ name: "Vada", price: 75, category: "food", img: 'https://images.unsplash.com/photo-1683533678059-63c6a0e9e3ef?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8dmFkYXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&q=60&w=1000' },
+
+{ name: "Uttapam", price: 80, category: "food", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRi3ifVZ_s_ZnIMfp4QJLHpP5uiqHPYIeS9zg&s" },
+
+{ name: "Upma", price: 65, category: "food", img: 'https://media.istockphoto.com/id/1488737992/photo/upma-recipe-suji-ka-upma-rava-upma-with-red-and-coconut-chutney.webp?a=1&b=1&s=612x612&w=0&k=20&c=1zjO85hiNAi55VhDbcISJjm2291mEw_pszwU1QuJKzs=' },
+
+{ name: "Rava Kesari", price: 70, category: "food", img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTp5nBG04OVb-90jOu0ViPi2fNDpWIbD4FR3Q&s' },
+
+// Indian dessert icon
+
+{ name: "veg Pongal", price: 70, category: "food", img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR42VtQcvzbTIjsZiRjkApTcVSMC0dKFOe_Fg&s' },
+
+{ name: "Medu Vada", price: 70, category: "food", img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTS7VvXh15yqtYRoBAU2w5eCPuGbtRjIcT3fw&s' },
+
+{ name: "Paddu", price: 90, category: "food", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ1oqt2qhlzam1uY8aDAZqQZR7SPA27Km-VIQ&s" },
+
+{ name: "Sambar Rice", price: 90, category: "food", img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQK-mAvu0QJLLSTfll1h5S12Cf_GHzIJoiucA&s' },
+
+// North Indian
+{ name: "Butter Chicken", price: 200, category: "food", img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcDCEHR21Otcq7z3FQ2JCjX6hviR2zD9qlAQ&s' },
+
+{ name: "Paneer Tikka", price: 160, category: "food", img: 'https://lentillovingfamily.com/wp-content/uploads/2025/08/paneer-tikka-2.jpg' },
+
+{ name: "Chole Bhature", price: 120, category: "food", img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyta2FEc05FPDkoHtzey9a8nmlgumGb7lDew&s' },
+
+{ name: "Dal Makhani", price: 110, category: "food", img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4GfJo92Nr_qva-lOrSWb1rVfTqhNNYcbrXQ&s'},
+
+{ name: "Rajma Rice", price: 110, category: "food", img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrZZYV9Eu13fxu8qXT98ovX6SrG3hGOtpqPw&s'},
+
+{ name: "Aloo Paratha", price: 80, category: "food", img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcThSpIZC4K_IPOqpHrFPBMoYmsLBmlv0doI1w&s' },
+
+{ name: "Kadai Chicken", price: 200, category: "food", img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRX3TmetmqH7oW9GwEoqAq21b3NLyn-lgo3Uw&s' },
+
+{ name: "Tandoori Roti", price: 35, category: "food", img: 'https://media.istockphoto.com/id/1150376593/photo/bread-tandoori-indian-cuisine.jpg?s=612x612&w=0&k=20&c=GGT5LN7G4zLhJTEnP_KcyvYuayi8f1nJcvQwvmj0rCM=' },
+
+{ name: "Jeera Rice", price: 70, category: "food", img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRXlLbyEhqqBb6fSQs_TyyUVW8y2we3vaAdbA&s' },
+
+{ name: "Dahi Bhalla", price: 80, category: "food", img: 'https://www.cookwithmanali.com/wp-content/uploads/2019/10/Dahi-Bhalla.jpg' },
+
+// Chinese
+{ name: "Spring Rolls", price: 120, category: "food", img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTza89XuqcvI6HAxx4cgkRt2Q__7pusfLjiCQ&s' },
+
+{ name: "Manchurian", price: 140, category: "food", img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwlP7ovxUYJ_5aEbg65vQxy0AAaA3rO3xddg&s' },
+
+{ name: "Fried Rice", price: 130, category: "food", img:'https://shwetainthekitchen.com/wp-content/uploads/2023/06/veg-fried-rice.jpg' },
+
+{ name: "Noodles", price: 135, category: "food", img: 'https://dukaan.b-cdn.net/700x700/webp/298792/d49a4d9c-9681-485d-bd89-921f341dbdac.png' },
+
+{ name: "Veg Momos", price: 100, category: "food", img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQuUhCMBZX2cIaWe40jx7EWQ6PtHPXzYA6o9A&s'},
+
+{ name: "Schezwan Rice", price: 140, category: "food", img: 'https://www.cookclickndevour.com/wp-content/uploads/2016/04/schezwan-fried-rice-recipe-1.jpg' },
+
+{ name: "Chilli Chicken", price: 160, category: "food", img: 'https://static.toiimg.com/photo/53094926.cms' },
+
+{ name: "Gobi Manchurian", price: 130, category: "food", img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWNqwcxK5KDQFbcoYWPCVEZT0-DB28zyqo-A&s'},
+
+{ name: "Chicken Hakka Noodles", price: 150, category: "food", img: 'https://www.whiskaffair.com/wp-content/uploads/2018/03/Chicken-Hakka-Noodles-2-3.jpg' },
+
+{ name: "Paneer Chilli", price: 130, category: "food", img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQlGoDVklE1HxNnmwlpH1OOvsu5aV2FCwCSxw&s'},
+
+// Other International / Continental
+{ name: "Pizza Margherita", price: 180, category: "food", img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSX2w-6ljxAJtEImAJ4zBsRnou1CoSAVmgvQw&s' },
+
+{ name: "Pasta Alfredo", price: 160, category: "food", img: 'https://www.sharmispassions.com/wp-content/uploads/2015/12/alfredopasta5.jpg' },
+
+{ name: "Sandwich", price: 90, category: "food", img: 'https://static.toiimg.com/thumb/83740315.cms?imgsize=361903&width=800&height=800' },
+
+{ name: "French Toast", price: 100, category: "food", img: 'https://www.allrecipes.com/thmb/GHsW45mTpy_2EFSjCNEPdeo7Tek=/0x512/filters:no_upscale():max_bytes(150000):strip_icc()/ALR-recipe-16895-fluffy-french-toast-hero-01-ddmfs-4x3-7fd61e054f2c4f0f868b7ab0dd8767ae.jpg' },
+
+{ name: "Veg Cutlet", price: 70, category: "food", img: 'https://www.whiskaffair.com/wp-content/uploads/2020/09/Veg-Cutlet-2-3.jpg' },
+
+{ name: "Falafel", price: 130, category: "food", img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWztE6gugIz-WM3aPTY7tPWYp0W7uMMz1S0A&s' },
+
+{ name: "Nachos", price: 100, category: "food", img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHgUl7ayqHbfvCJyWXcABT6oqINOZOtOtZaA&s' },
+
+{ name: "Garlic Bread", price: 90, category: "food", img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSOMAY5LTfYjoZs0n9gvcMOF9RqzyMkqjLEyw&s' },
+
+{ name: "Paneer Pakoda", price: 110, category: "food", img: 'https://www.vegrecipesofindia.com/wp-content/uploads/2025/03/paneer-pakora-2-500x500.jpg'},
+
+{ name: "Corn Salad", price: 100, category: "food", img: 'https://cdn.loveandlemons.com/wp-content/uploads/2013/06/corn-salad.jpg' },
+
+{ name: "Curly Fries", price: 130, category: "fries", img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLGJgtkHUuzIzOlq_KhcYJWJamyjLYieJ4ww&s' },
+
+{ name: "Classic Burger Combo( Burger + French fries + Soft drink)", price:350, category: "Combo", img: 'https://media.istockphoto.com/id/520134277/photo/take-out-food-classic-cheeseburger-meal-isolated-on-white.jpg?s=612x612&w=0&k=20&c=-e-sj-hieOBQclUBRu8E7wRfIxqe4mB_CKnkJwyr-es='},
+
+{name: "Cheese Lover’s Combo( Cheeseburger + Onion rings + Milkshake)", price:480, category: "Combo", img: "https://thumbs.dreamstime.com/b/classic-cheeseburger-meal-fries-milkshake-beef-patty-cheese-lettuce-tomato-onion-served-crispy-creamy-creating-366142747.jpg"},
+
+{name: "Breakfast combo(edli + dosa + vada)", price:250, category: "Combo", img:"https://www.bookmyballoons.in/wp-content/uploads/2018/09/Mini-Breakfast-Package-Cost-Bangalore.jpg"},
+
+];
+
+let adminUsername = "";
+let cart = [];
+let currentCategory = "all";
+
+const cartContainer = document.getElementById("cartItems");
+const totalDisplay = document.getElementById("totalPrice");
+
+// This function will remember and show the filtered or full menu
+function displayMenu(items) {
+  const menuContainer = document.getElementById("menu");
+  menuContainer.innerHTML = "";
+  items.forEach(item => {
+    const card = document.createElement("div");
+    card.classList.add("menu-item");
+    card.id = item.name.replace(/\s+/g, "_");
+    const inCart = cart.find(i => i.name === item.name);
+    card.innerHTML = `
+      <img src="${item.img}" alt="${item.name}">
+      <h3>${item.name}</h3>
+      <p>₹${item.price}</p>
+      <button onclick="toggleCartItem('${item.name}', this)">${inCart ? "Added ✅" : "Add to Cart"}</button>
+    `;
+    if (inCart) card.classList.add("selected");
+    menuContainer.appendChild(card);
+  });
+}
+
+// This function remembers the chosen category filter
+function showCategory(cat, btn) {
+  currentCategory = cat;
+  const filtered = menu.filter(i => i.category === cat);
+  displayMenu(filtered);
+  highlightButton(btn);
+}
+
+function showAll(btn) {
+  currentCategory = "all";
+  displayMenu(menu);
+  highlightButton(btn);
+}
+function Combo(btn) {
+  currentCategory = "comb";
+  displayMenu(menu);
+  highlightButton(btn);
+}
+
+function highlightButton(activeBtn) {
+  document.querySelectorAll(".categories button").forEach(b => b.classList.remove("active"));
+  if (activeBtn) activeBtn.classList.add("active");
+}
+
+function toggleCartItem(name, button) {
+  const item = menu.find(i => i.name === name);
+  const existing = cart.find(i => i.name === name);
+  const itemCard = document.getElementById(name.replace(/\s+/g, "_"));
+  if (existing) {
+    cart = cart.filter(i => i.name !== name);
+    button.textContent = "Add to Cart";
+    itemCard.classList.remove("selected");
+  } else {
+    cart.push({ ...item, qty: 1 });
+    button.textContent = "Added ✅";
+    itemCard.classList.add("selected");
+  }
+  updateCart();
+}
+
+function updateCart() {
+  cartContainer.innerHTML = "";
+  let total = 0;
+  cart.forEach(item => {
+    total += item.price * item.qty;
+    const div = document.createElement("div");
+    div.classList.add("cart-item");
+    div.innerHTML = `
+      ${item.name} (₹${item.price}) × ${item.qty}
+      <div>
+        <button onclick="increaseItem('${item.name}')">+</button>
+        <button onclick="decreaseItem('${item.name}')">-</button>
+      </div>
+    `;
+    cartContainer.appendChild(div);
+  });
+  totalDisplay.textContent = total;
+
+  // Always show user's last-chosen category
+  if (currentCategory === "all") displayMenu(menu);
+  else displayMenu(menu.filter(i => i.category === currentCategory));
+}
+
+function increaseItem(name) {
+  const it = cart.find(i => i.name === name);
+  if (it) it.qty++;
+  updateCart();
+}
+
+function decreaseItem(name) {
+  const index = cart.findIndex(i => i.name === name);
+  if (index !== -1) {
+    if (cart[index].qty > 1) cart[index].qty--;
+    else cart.splice(index, 1);
+  }
+  updateCart();
+}
+
+function goToCart() {
+  document.getElementById("mainContainer").style.display = "none";
+  document.getElementById("cartView").style.display = "block";
+}
+
+function backToHome() {
+  document.getElementById("cartView").style.display = "none";
+  document.getElementById("mainContainer").style.display = "flex";
+  // correct filter when user returns
+  if (currentCategory === "all") displayMenu(menu);
+  else displayMenu(menu.filter(i => i.category === currentCategory));
+}
+
+function cancelOrder() {
+  cart = [];
+  updateCart();
+  backToHome();
+}
+
+function confirmOrder() {
+  if (cart.length === 0) return alert("Cart is empty!");
+  document.getElementById("customerModal").classList.add("active");
+}
+
+function submitCustomerDetails() {
+  const name = document.getElementById("customerName").value.trim();
+  const phone = document.getElementById("customerPhone").value.trim();
+  if (!name || !phone) return alert("Please enter valid details!");
+  document.getElementById("customerModal").classList.remove("active");
+  printBill(name, phone);
+  document.getElementById("customerName").value = "";
+  document.getElementById("customerPhone").value = "";
+  cancelOrder();
+}
+
+function cancelCustomerDetails() {
+  document.getElementById("customerName").value = "";
+  document.getElementById("customerPhone").value = "";
+  document.getElementById("customerModal").classList.remove("active");
+}
+
+function printBill(name, phone) {
+  const orderTime = new Date().toLocaleString();
+  const totalWithoutCharity = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
+  const charityAmount = 1; // Fixed ₹1 charity
+  const totalWithCharity = totalWithoutCharity + charityAmount;
+
+  let bill = `
+  <html><head><title>Nithin Café Bill</title>
+  <style>
+    body { font-family: Poppins, sans-serif; background: #fff7e6; color: #3e2723; }
+    .bill-box { max-width: 500px; margin: 20px auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.2); }
+    h2 { text-align: center; color: #6f4e37; }
+    th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd; }
+    th { background: #ffe0b2; }
+    .footer { text-align: center; margin-top: 10px; font-style: italic; }
+  </style></head><body>
+  <div class="bill-box">
+    <h2>☕ Nithin Café</h2>
+    <p style="text-align:center;">Where Every Sip Feels Like Home</p>
+    <hr>
+    <p><strong>Date:</strong> ${orderTime}<br>
+    <strong>Admin:</strong> ${adminUsername}<br>
+    <strong>Customer:</strong> ${name}<br>
+    <strong>Phone:</strong> ${phone}</p>
+    <table width="100%">
+    <tr><th>No.</th><th>Item</th><th>Qty</th><th>Price</th><th>Amount</th></tr>`;
+
+  cart.forEach((it, i) => {
+    bill += `<tr><td>${i + 1}</td><td>${it.name}</td><td>${it.qty}</td><td>₹${it.price}</td><td>₹${it.price * it.qty}</td></tr>`;
+  });
+
+  bill += `<tr><td colspan="4" style="text-align:right;"><b>Charity contribution:</b></td><td style="color:#388e3c;">₹${charityAmount}</td></tr>`;
+  bill += `<tr><td colspan="4" style="text-align:right;"><b>Total:</b></td><td><b>₹${totalWithCharity}</b></td></tr>`;
+  bill += `</table><p class='footer'>Thank you for visiting Nithin Café ☕</p></div>
+  <script>window.print();setTimeout(() => window.close(), 300);<\/script></body></html>`;
+
+  const w = window.open("", "_blank", "width=600,height=700");
+  w.document.write(bill);
+  w.document.close();
+}
+
+
+
+function onlinePaymentDone() {
+  const name = document.getElementById("customerName").value.trim();
+  const phone = document.getElementById("customerPhone").value.trim();
+
+  if (!name || !phone || phone.length !== 10) {
+    alert("Please enter valid customer details first.");
+    return;
+  }
+
+  // Example slogans by day
+  const slogans = {
+    0: "Relax, it's Sunday! Have a comforting sip.",
+    1: "Motivation Monday: Start your week with energy!",
+    2: "Tasty Tuesday: Savor every sip and bite.",
+    3: "Wonderful Wednesday: Halfway to the weekend!",
+    4: "Thankful Thursday: Enjoy your coffee break.",
+    5: "Feel-good Friday: Celebrate with a cup!",
+    6: "Sweet Saturday: Treat yourself today."
+  };
+  const today = new Date().getDay();
+  const slogan = slogans[today] || "";
+
+  // Simulate bill generation - replace with your actual bill logic if any
+  const bill = `Thank you, ${name}! Your order is confirmed.
+Total amount: ₹${calculateTotalWithCharity()}
+${slogan}
+Sent to mobile: +91${phone}`;
+
+  // Print bill in new window or integrate your printBill function here
+  const billWindow = window.open("", "_blank", "width=600,height=700");
+  billWindow.document.write(`<pre style="font-family: monospace;">${bill}</pre>`);
+  billWindow.document.close();
+  billWindow.focus();
+  billWindow.print();
+
+  // Simulate sending message, e.g. via WhatsApp/SMS API server or just alert here
+  alert(`Bill has been sent to +91${phone} with message:\n\n${slogan}`);
+
+  // Close QR/payment modal and reset UI as needed
+  document.getElementById("customerModal").classList.remove("active");
+  cancelOrder(); // Clear cart and return to home (if you have such a function)
+}
+
+function login() {
+  const name = document.getElementById("username").value.trim();
+  const pass = document.getElementById("password").value.trim();
+  if (name === "nithin" && pass === "1234") {
+    adminUsername = name;
+    document.getElementById("loginModal").classList.remove("active");
+    document.getElementById("mainContainer").style.display = "flex";
+    document.getElementById("topButtons").style.display = "block";
+    document.getElementById("logoutBtn").style.display = "block";
+    // When you login, show All menu items
+    showAll(document.querySelector(".categories button:last-child"));
+    document.getElementById("username").value = "";
+    document.getElementById("password").value = "";
+  } else {
+    document.getElementById("loginError").innerText = "Invalid credentials!";
+  }
+}
+
+function doLogout() {
+  adminUsername = "";
+  cart = [];
+  document.getElementById("mainContainer").style.display = "none";
+  document.getElementById("cartView").style.display = "none";
+  document.getElementById("topButtons").style.display = "none";
+  document.getElementById("logoutBtn").style.display = "none";
+  document.getElementById("logoutModal").classList.remove("active");
+  document.getElementById("loginModal").classList.add("active");
+  document.getElementById("username").value = "";
+  document.getElementById("password").value = "";
+  document.getElementById("loginError").innerText = "";
+  document.getElementById("customerName").value = "";
+  document.getElementById("customerPhone").value = "";
+}
+
+function showLogoutModal() {
+  document.getElementById("logoutModal").classList.add("active");
+}
+
+function hideLogoutModal() {
+  document.getElementById("logoutModal").classList.remove("active");
+}
+</script>
+</body>
+</html>
